@@ -1,13 +1,11 @@
-package de.coldtea.smplr.smplralarm.receivers
+package de.coldtea.smplr.smplralarm.models
 
 import android.content.Intent
 import de.coldtea.smplr.smplralarm.extensions.activeDaysAsJsonString
-import de.coldtea.smplr.smplralarm.models.NotificationChannelItem
-import de.coldtea.smplr.smplralarm.models.NotificationItem
-import de.coldtea.smplr.smplralarm.models.WeekDays
 import de.coldtea.smplr.smplralarm.repository.entity.AlarmNotificationEntity
 import de.coldtea.smplr.smplralarm.repository.entity.NotificationChannelEntity
 import de.coldtea.smplr.smplralarm.repository.entity.NotificationEntity
+import java.time.LocalDate
 
 /**
  * Created by [Yasar Naci Gündüz](https://github.com/ColdTea-Projects).
@@ -25,6 +23,7 @@ data class AlarmNotification(
     val alarmNotificationId: Int,
     val hour: Int,
     val min: Int,
+    val date: LocalDate,
     val weekDays: List<WeekDays>,
     val notificationChannelItem: NotificationChannelItem?,
     val notificationItem: NotificationItem?,
@@ -40,6 +39,7 @@ internal fun AlarmNotification.extractAlarmNotificationEntity(): AlarmNotificati
         alarmNotificationId,
         hour,
         min,
+        date.toEpochDay(),
         weekDays.activeDaysAsJsonString(),
         isActive,
         infoPairs

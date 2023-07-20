@@ -4,19 +4,22 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import de.coldtea.smplr.smplralarm.extensions.convertToJson
+import de.coldtea.smplr.smplralarm.extensions.isPastDate
+import de.coldtea.smplr.smplralarm.extensions.isToday
 import de.coldtea.smplr.smplralarm.models.NotificationChannelItem
 import de.coldtea.smplr.smplralarm.models.NotificationItem
 import de.coldtea.smplr.smplralarm.models.WeekDays
-import de.coldtea.smplr.smplralarm.receivers.AlarmNotification
+import de.coldtea.smplr.smplralarm.models.AlarmNotification
 import de.coldtea.smplr.smplralarm.receivers.AlarmReceiver
-import de.coldtea.smplr.smplralarm.receivers.SmplrAlarmReceiverObjects.Companion.SMPLR_ALARM_RECEIVER_INTENT_ID
-import de.coldtea.smplr.smplralarm.receivers.SmplrAlarmReceiverObjects.Companion.alarmNotification
+import de.coldtea.smplr.smplralarm.models.SmplrAlarmReceiverObjects.Companion.SMPLR_ALARM_RECEIVER_INTENT_ID
+import de.coldtea.smplr.smplralarm.models.SmplrAlarmReceiverObjects.Companion.alarmNotification
 import de.coldtea.smplr.smplralarm.repository.AlarmNotificationRepository
 import de.coldtea.smplr.smplralarm.services.AlarmService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDate
 import kotlin.math.absoluteValue
 
 /**
@@ -27,6 +30,7 @@ class SmplrAlarmAPI(val context: Context) {
     //region properties
 
     private var hour = -1
+    private var date: LocalDate = LocalDate.now()
     private var min = -1
     private var weekdays: List<WeekDays> = listOf()
     private var isActive: Boolean = true
@@ -47,8 +51,10 @@ class SmplrAlarmAPI(val context: Context) {
 
     private val isAlarmValid: Boolean
         get() =
-            if (hour == -1 && min == -1) true
-        else hour > -1 && hour < 24 && min > -1 && min < 60
+            if (hour == -1 && min == -1 && date.isToday())
+                true
+            else
+                hour > -1 && hour < 24 && min > -1 && min < 60 && !date.isPastDate()
 
     //endregion
 
@@ -67,6 +73,10 @@ class SmplrAlarmAPI(val context: Context) {
 
     fun min(min: () -> Int) {
         this.min = min()
+    }
+
+    fun date(date: () -> LocalDate) {
+        this.date = date()
     }
 
     fun requestCode(requestCode: () -> Int) {
@@ -129,7 +139,7 @@ class SmplrAlarmAPI(val context: Context) {
             requestAPI?.requestAlarmList()
         }
 
-        alarmService.setAlarm(requestCode, hour, min, weekdays)
+        alarmService.setAlarm(requestCode, hour, min, date, weekdays)
 
         return requestCode
     }
@@ -167,6 +177,8 @@ class SmplrAlarmAPI(val context: Context) {
 
                 val updatedHour = if (hour == -1) alarmNotification.hour else hour
                 val updatedMinute = if (min == -1) alarmNotification.min else min
+                val updatedDate = if (date.isEqual(alarmNotification.date)) alarmNotification.date else date
+
                 val updatedPairs =
                     if (infoPairs == null) alarmNotification.infoPairs else infoPairs.convertToJson()
 
@@ -174,6 +186,7 @@ class SmplrAlarmAPI(val context: Context) {
                     requestCode,
                     updatedHour,
                     updatedMinute,
+                    updatedDate,
                     weekdays,
                     updatedActivation,
                     updatedPairs
@@ -190,6 +203,7 @@ class SmplrAlarmAPI(val context: Context) {
                     requestCode,
                     updatedHour,
                     updatedMinute,
+                    updatedDate,
                     weekdays
                 )
                 requestAPI?.requestAlarmList()
@@ -214,6 +228,7 @@ class SmplrAlarmAPI(val context: Context) {
         alarmNotificationId = requestCode,
         hour = hour,
         min = min,
+        date = date,
         weekDays = weekdays,
         notificationChannelItem = when {
             notification == null && notificationChannel == null -> null
@@ -241,6 +256,7 @@ class SmplrAlarmAPI(val context: Context) {
         alarmNotificationId: Int,
         hour: Int,
         min: Int,
+        date: LocalDate,
         weekDays: List<WeekDays>?,
         isActive: Boolean,
         infoPairs: String
@@ -251,6 +267,7 @@ class SmplrAlarmAPI(val context: Context) {
                 alarmNotificationId,
                 hour,
                 min,
+                date,
                 weekDays,
                 isActive,
                 infoPairs

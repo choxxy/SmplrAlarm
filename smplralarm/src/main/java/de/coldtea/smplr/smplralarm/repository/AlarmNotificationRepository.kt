@@ -7,19 +7,21 @@ import android.content.Intent.URI_ALLOW_UNSAFE
 import de.coldtea.smplr.smplralarm.apis.SmplrAlarmAPI
 import de.coldtea.smplr.smplralarm.extensions.activeDaysAsJsonString
 import de.coldtea.smplr.smplralarm.extensions.activeDaysAsWeekdaysList
+import de.coldtea.smplr.smplralarm.extensions.asLocalDate
 import de.coldtea.smplr.smplralarm.extensions.convertToNotificationItem
+import de.coldtea.smplr.smplralarm.models.AlarmNotification
 import de.coldtea.smplr.smplralarm.models.NotificationItem
 import de.coldtea.smplr.smplralarm.models.WeekDays
-import de.coldtea.smplr.smplralarm.receivers.AlarmNotification
-import de.coldtea.smplr.smplralarm.receivers.extractAlarmNotificationEntity
-import de.coldtea.smplr.smplralarm.receivers.extractNotificationChannelEntity
-import de.coldtea.smplr.smplralarm.receivers.extractNotificationEntity
+import de.coldtea.smplr.smplralarm.models.extractAlarmNotificationEntity
+import de.coldtea.smplr.smplralarm.models.extractNotificationChannelEntity
+import de.coldtea.smplr.smplralarm.models.extractNotificationEntity
 import de.coldtea.smplr.smplralarm.repository.entity.AlarmNotificationEntity
 import de.coldtea.smplr.smplralarm.repository.entity.NotificationEntity
 import de.coldtea.smplr.smplralarm.repository.entity.convertToNotificationChannelItem
 import org.json.JSONException
 import org.json.JSONObject
 import java.net.URISyntaxException
+import java.time.LocalDate
 import java.util.*
 
 /**
@@ -101,16 +103,18 @@ internal class AlarmNotificationRepository(
         alarmNotificationId: Int,
         hour: Int,
         min: Int,
+        date: LocalDate,
         weekDays: List<WeekDays>?,
         isActive: Boolean,
         infoPairs: String
     ) {
-        val updatedWeekDays = weekDays ?: listOf()
+        val updatedWeekDays = weekDays ?: emptyList()
 
         val newAlarmNotificationEntity = AlarmNotificationEntity(
             alarmNotificationId,
             hour,
             min,
+            date.toEpochDay(),
             updatedWeekDays.activeDaysAsJsonString(),
             isActive,
             infoPairs
@@ -164,6 +168,7 @@ internal class AlarmNotificationRepository(
             alarmNotificationId = intentId,
             hour = alarmNotification.alarmNotificationEntity.hour,
             min = alarmNotification.alarmNotificationEntity.min,
+            date = alarmNotification.alarmNotificationEntity.date.asLocalDate(),
             weekDays = alarmNotification.alarmNotificationEntity.activeDaysAsWeekdaysList()
                 ?: listOf(),
             notificationChannelItem = alarmNotification.notificationChannelEntity.convertToNotificationChannelItem(),
@@ -219,6 +224,7 @@ internal class AlarmNotificationRepository(
                     alarmNotificationId = alarmNotification.alarmNotificationEntity.alarmNotificationId,
                     hour = alarmNotification.alarmNotificationEntity.hour,
                     min = alarmNotification.alarmNotificationEntity.min,
+                    date = alarmNotification.alarmNotificationEntity.date.asLocalDate(),
                     weekDays = alarmNotification.alarmNotificationEntity.activeDaysAsWeekdaysList()
                         ?: listOf(),
                     notificationChannelItem = alarmNotification.notificationChannelEntity.convertToNotificationChannelItem(),
@@ -256,6 +262,7 @@ internal class AlarmNotificationRepository(
             alarmNotification.alarmNotificationEntity.alarmNotificationId,
             alarmNotification.alarmNotificationEntity.hour,
             alarmNotification.alarmNotificationEntity.min,
+            alarmNotification.alarmNotificationEntity.date.asLocalDate(),
             listOf(),
             false,
             alarmNotification.alarmNotificationEntity.infoPairs

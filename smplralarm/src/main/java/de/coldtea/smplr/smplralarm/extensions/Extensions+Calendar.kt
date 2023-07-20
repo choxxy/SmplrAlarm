@@ -3,9 +3,10 @@ package de.coldtea.smplr.smplralarm.extensions
 import de.coldtea.smplr.smplralarm.models.WeekDays
 import timber.log.Timber
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.TemporalAdjusters
-import java.util.*
+import java.util.Calendar
 
 /**
  * Created by [Yasar Naci Gündüz](https://github.com/ColdTea-Projects).
@@ -14,15 +15,17 @@ import java.util.*
 internal fun Calendar.getTimeExactForAlarmInMilliseconds(
     hour: Int,
     minute: Int,
+    date: LocalDate,
     weekDays: List<WeekDays>
 ): Long {
-    return getTimeExactForAlarm(hour, minute, weekDays).timeInMillis
+    return getTimeExactForAlarm(hour, minute, date, weekDays).timeInMillis
 }
 
 private fun Calendar.getTimeExactForAlarm(
     hour: Int,
     minute: Int,
-    weekDays: List<WeekDays>
+    date: LocalDate,
+    weekDays: List<WeekDays> = emptyList()
 ): Calendar {
     timeInMillis = System.currentTimeMillis()
 
@@ -33,9 +36,14 @@ private fun Calendar.getTimeExactForAlarm(
 
     val sortedWeekDays = weekDays.sortedBy { it.value }
 
-    when{
-        weekDays.isNotEmpty() && !isAlarmForToday(sortedWeekDays, hour, minute) -> setTheDay(sortedWeekDays.getClosestDay())
-        weekDays.isEmpty() && !isTimeAhead(hour, minute)-> add(Calendar.DATE, 1)
+    when {
+        weekDays.isNotEmpty() && !isAlarmForToday(sortedWeekDays, hour, minute) ->
+            setTheDay(sortedWeekDays.getClosestDay())
+        weekDays.isEmpty() && !isTimeAhead(hour, minute) ->{
+            set(Calendar.DATE, date.dayOfMonth)
+            set(Calendar.MONTH, (date.monthValue - 1)) // calendar months start from 0, compensate
+            set(Calendar.YEAR, date.year)
+        }
     }
 
     return this
@@ -73,7 +81,8 @@ private fun Calendar.setTheDay(nextWeekDay: Int) {
         val date = get(Calendar.DAY_OF_MONTH)
         val day = get(Calendar.DAY_OF_WEEK)
 
-        val daysToPostpone = if ((nextWeekDay + 7 - day) % 7 == 0) 7 else (nextWeekDay + 7 - day) % 7
+        val daysToPostpone =
+            if ((nextWeekDay + 7 - day) % 7 == 0) 7 else (nextWeekDay + 7 - day) % 7
         set(Calendar.DAY_OF_MONTH, date + daysToPostpone)
     }
 }
@@ -92,9 +101,11 @@ private fun List<WeekDays>.getClosestDay(): Int =
         }
         ?: this.first().value
 
-private fun isAlarmForToday(weekDays: List<WeekDays>, hour: Int, minute: Int): Boolean = Calendar.getInstance().let {
-    weekDays.map { weekDay -> weekDay.value }.contains(it.get(Calendar.DAY_OF_WEEK)) && isTimeAhead(hour, minute)
-}
+private fun isAlarmForToday(weekDays: List<WeekDays>, hour: Int, minute: Int): Boolean =
+    Calendar.getInstance().let {
+        weekDays.map { weekDay -> weekDay.value }
+            .contains(it.get(Calendar.DAY_OF_WEEK)) && isTimeAhead(hour, minute)
+    }
 
 
 

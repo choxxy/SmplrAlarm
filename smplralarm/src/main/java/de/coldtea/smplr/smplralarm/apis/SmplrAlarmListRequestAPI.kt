@@ -35,6 +35,7 @@ class SmplrAlarmListRequestAPI(val context: Context) {
                     it.alarmNotificationId,
                     it.hour,
                     it.min,
+                    it.date,
                     it.weekDays,
                     it.isActive,
                     it.infoPairs

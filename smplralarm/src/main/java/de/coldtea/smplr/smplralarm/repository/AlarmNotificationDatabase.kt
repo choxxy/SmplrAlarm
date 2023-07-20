@@ -12,6 +12,7 @@ import de.coldtea.smplr.smplralarm.repository.entity.AlarmNotificationEntity
 import de.coldtea.smplr.smplralarm.repository.entity.NotificationChannelEntity
 import de.coldtea.smplr.smplralarm.repository.entity.NotificationEntity
 import de.coldtea.smplr.smplralarm.repository.migrations.MIGRATION_1_2
+import de.coldtea.smplr.smplralarm.repository.migrations.MIGRATION_2_3
 
 /**
  * Created by [Yasar Naci Gündüz](https://github.com/ColdTea-Projects).
@@ -23,7 +24,7 @@ import de.coldtea.smplr.smplralarm.repository.migrations.MIGRATION_1_2
         NotificationChannelEntity::class,
         NotificationEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 internal abstract class AlarmNotificationDatabase : RoomDatabase() {
@@ -45,7 +46,7 @@ internal abstract class AlarmNotificationDatabase : RoomDatabase() {
                         AlarmNotificationDatabase::class.java,
                         "db_smplr_alarm"
                     )
-                        .addMigrations(MIGRATION_1_2)
+                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                         .build()
                     INSTANCE = instance
                 }

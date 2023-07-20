@@ -7,9 +7,10 @@ import android.content.Intent
 import de.coldtea.smplr.smplralarm.extensions.getTimeExactForAlarmInMilliseconds
 import de.coldtea.smplr.smplralarm.models.WeekDays
 import de.coldtea.smplr.smplralarm.receivers.ActivateAppReceiver
-import de.coldtea.smplr.smplralarm.receivers.AlarmNotification
+import de.coldtea.smplr.smplralarm.models.AlarmNotification
 import de.coldtea.smplr.smplralarm.receivers.AlarmReceiver
-import de.coldtea.smplr.smplralarm.receivers.SmplrAlarmReceiverObjects
+import de.coldtea.smplr.smplralarm.models.SmplrAlarmReceiverObjects
+import java.time.LocalDate
 import java.util.*
 
 /**
@@ -28,13 +29,13 @@ class AlarmService(val context: Context) {
         requestCode: Int,
         hour: Int,
         min: Int,
+        date: LocalDate,
         weekDays: List<WeekDays>,
         receiverIntent: PendingIntent? = null
     ) {
         val alarmReceiverIntent = receiverIntent ?: createReceiverPendingIntent(requestCode, 0)
         val openAppIntent = createOpenAppPendingIntent(requestCode, 0)
-        val exactAlarmTime =
-            calendar.getTimeExactForAlarmInMilliseconds(hour, min, weekDays)
+        val exactAlarmTime = calendar.getTimeExactForAlarmInMilliseconds(hour, min,date, weekDays)
 
         val alarmClockInfo = AlarmManager.AlarmClockInfo(
             exactAlarmTime,
@@ -54,6 +55,7 @@ class AlarmService(val context: Context) {
             requestCode = alarmNotification.alarmNotificationId,
             hour = alarmNotification.hour,
             min = alarmNotification.min,
+            date = alarmNotification.date,
             weekDays = alarmNotification.weekDays
         )
     }
@@ -68,6 +70,7 @@ class AlarmService(val context: Context) {
             requestCode = alarmNotification.alarmNotificationId,
             hour = alarmNotification.hour,
             min = alarmNotification.min,
+            date = alarmNotification.date,
             weekDays = alarmNotification.weekDays,
             receiverIntent = pendingIntent
         )
@@ -85,6 +88,7 @@ class AlarmService(val context: Context) {
             requestCode = alarmNotification.alarmNotificationId,
             hour = alarmNotification.hour,
             min = alarmNotification.min,
+            date = alarmNotification.date,
             weekDays = alarmNotification.weekDays,
             receiverIntent = pendingIntent
         )
