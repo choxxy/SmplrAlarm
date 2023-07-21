@@ -1,16 +1,14 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: "kotlin-kapt"
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "30.0.3"
+    compileSdk 33
 
     defaultConfig {
         applicationId "de.coldtea.smplr.alarm"
-        minSdkVersion 24
-        targetSdkVersion 31
+        minSdk 24
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -33,6 +31,7 @@ android {
 
     buildFeatures {
         dataBinding true
+        viewBinding true
     }
     namespace 'de.coldtea.smplr.alarm'
 }

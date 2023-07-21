@@ -17,7 +17,7 @@ internal data class AlarmNotificationEntity(
     val hour: Int,
     @ColumnInfo(name = "min")
     val min: Int,
-    @ColumnInfo(name = "date")
+    @ColumnInfo(name = "alarm_date")
     val date: Long, // LocalDate epochDay value
     @ColumnInfo(name = "week_days")
     val weekDays: String,

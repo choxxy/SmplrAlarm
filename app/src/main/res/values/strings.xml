@@ -2,5 +2,7 @@
     <string name="app_name">SmplrAlarm</string>
     <!-- Strings used for fragments for navigation -->
     <string name="main_fragment_label">Main Fragment</string>
+    <string name="need_permission_to_schedule_alarms">%s, need permission for setting alarm.</string>
+    <string name="dialog_ok">Ok</string>
 
 </resources>
