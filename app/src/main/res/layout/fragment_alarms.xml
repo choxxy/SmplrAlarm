@@ -51,13 +51,27 @@
                 app:layout_constraintStart_toEndOf="@id/seperator"
                 app:layout_constraintTop_toTopOf="@id/seperator" />
 
+
+            <EditText
+                android:id="@+id/date"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:imeOptions="actionNext"
+                android:inputType="date"
+                android:hint="Set date"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@id/monday"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/hour" />
+
+
             <CheckBox
                 android:id="@+id/monday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="M"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/hour" />
+                app:layout_constraintTop_toBottomOf="@id/date" />
 
             <CheckBox
                 android:id="@+id/tuesday"
@@ -65,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:text="T"
                 app:layout_constraintStart_toEndOf="@id/monday"
-                app:layout_constraintTop_toBottomOf="@id/hour" />
+                app:layout_constraintTop_toBottomOf="@id/date" />
 
             <CheckBox
                 android:id="@+id/wednesday"
@@ -73,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:text="W"
                 app:layout_constraintStart_toEndOf="@id/tuesday"
-                app:layout_constraintTop_toBottomOf="@id/hour" />
+                app:layout_constraintTop_toBottomOf="@id/date" />
 
             <CheckBox
                 android:id="@+id/thursday"
@@ -81,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:text="Th"
                 app:layout_constraintStart_toEndOf="@id/wednesday"
-                app:layout_constraintTop_toBottomOf="@id/hour" />
+                app:layout_constraintTop_toBottomOf="@id/date" />
 
             <CheckBox
                 android:id="@+id/friday"
@@ -89,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:text="F"
                 app:layout_constraintStart_toEndOf="@id/thursday"
-                app:layout_constraintTop_toBottomOf="@id/hour" />
+                app:layout_constraintTop_toBottomOf="@id/date" />
 
             <CheckBox
                 android:id="@+id/saturday"
@@ -97,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:text="Sa"
                 app:layout_constraintStart_toEndOf="@id/friday"
-                app:layout_constraintTop_toBottomOf="@id/hour" />
+                app:layout_constraintTop_toBottomOf="@id/date" />
 
             <CheckBox
                 android:id="@+id/sunday"
@@ -105,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:text="S"
                 app:layout_constraintStart_toEndOf="@id/saturday"
-                app:layout_constraintTop_toBottomOf="@id/hour" />
+                app:layout_constraintTop_toBottomOf="@id/date" />
 
             <Button
                 android:id="@+id/set_intent_alarm"
