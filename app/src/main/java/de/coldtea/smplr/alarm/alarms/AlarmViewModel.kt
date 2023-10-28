@@ -1,10 +1,13 @@
 package de.coldtea.smplr.alarm.alarms
 
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import de.coldtea.smplr.alarm.MainActivity
 import de.coldtea.smplr.alarm.R
 import de.coldtea.smplr.alarm.alarms.models.WeekInfo
@@ -13,8 +16,14 @@ import de.coldtea.smplr.alarm.receiver.ActionReceiver
 import de.coldtea.smplr.alarm.receiver.AlarmBroadcastReceiver
 import de.coldtea.smplr.smplralarm.*
 import de.coldtea.smplr.smplralarm.apis.SmplrAlarmListRequestAPI
+import de.coldtea.smplr.smplralarm.receivers.AlarmAction
+import java.time.LocalDate
+import javax.inject.Inject
 
-class AlarmViewModel : ViewModel() {
+@HiltViewModel
+class AlarmViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : ViewModel() {
 
     lateinit var smplrAlarmListRequestAPI: SmplrAlarmListRequestAPI
 
@@ -218,12 +227,99 @@ class AlarmViewModel : ViewModel() {
         }
     }
 
+    private fun setAlarm(hour: Int, minute: Int, date: LocalDate, message: String): Int {
+
+        val onClickShortcutIntent = Intent(
+            context,
+            MainActivity::class.java
+        )
+
+        val fullScreenIntent = Intent(
+            context,
+            ActivityLockScreenAlarm::class.java
+        )
+
+        val alarmReceivedIntent = Intent(
+            context,
+            AlarmBroadcastReceiver::class.java
+        )
+
+        /*val snoozeIntent = Intent(context, SnoozeActionReceiver::class.java).apply {
+            action = AlarmAction.ACTION_SNOOZE
+            putExtra(HOUR, hour)
+            putExtra(MINUTE, minute)
+        }
+
+
+        val dismissIntent = Intent(context, ActionReceiver::class.java).apply {
+            action = ACTION_DISMISS
+        }*/
+
+        val notificationDismissIntent = Intent(context, ActionReceiver::class.java).apply {
+            action = AlarmAction.ACTION_NOTIFICATION_DISMISS
+        }
+
+        fullScreenIntent.putExtra("SmplrText", "You did it, you crazy bastard you did it!")
+
+        val alarmId = smplrAlarmSet(context) {
+            hour { hour }
+            min { minute }
+            date { date }
+            weekdays {}
+            contentIntent { onClickShortcutIntent }
+            //receiverIntent { fullScreenIntent }
+            alarmReceivedIntent { alarmReceivedIntent }
+            notification {
+                alarmNotification {
+                    smallIcon { R.drawable.ic_baseline_alarm_on_24 }
+                    title { "PennyWise" }
+                    message { message }
+                    bigText { "" }
+                    autoCancel { true }
+                    /*firstButtonText { "Snooze" }
+                    secondButtonText { "Dismiss" }
+                    firstButtonIntent { snoozeIntent }
+                    secondButtonIntent { dismissIntent }*/
+                    notificationDismissedIntent { notificationDismissIntent }
+                }
+            }
+            notificationChannel {
+                channel {
+                    importance { NotificationManager.IMPORTANCE_HIGH }
+                    showBadge { false }
+                    name { "de.coldtea.smplr.alarm.channel" }
+                    description { "This notification channel is created by SmplrAlarm" }
+                }
+            }
+        }
+        return alarmId
+    }
+
+    fun updateAlarm(alarmId: Int, hour: Int, minute: Int, date: LocalDate, isActive: Boolean) {
+
+        smplrAlarmUpdate(context) {
+            requestCode { alarmId }
+            hour { hour }
+            min { minute }
+            date { date }
+            weekdays {}
+            isActive { isActive }
+        }
+
+        smplrAlarmUpdate(context) {
+        }
+    }
+
+
+    fun cancelAlarm(alarmId: Int) {
+        smplrAlarmCancel(context) {
+            requestCode { alarmId }
+        }
+    }
+
+
     fun requestAlarmList() = smplrAlarmListRequestAPI.requestAlarmList()
 
-    fun cancelAlarm(requestCode: Int, applicationContext: Context) =
-        smplrAlarmCancel(applicationContext) {
-            requestCode { requestCode }
-        }
 
     companion object{
         internal const val ACTION_SNOOZE = "action_snooze"

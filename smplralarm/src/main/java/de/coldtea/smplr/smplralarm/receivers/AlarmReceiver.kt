@@ -12,7 +12,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 /**
  * Created by [Yasar Naci Gündüz](https://github.com/ColdTea-Projects).
@@ -20,30 +21,22 @@ import java.util.*
 
 internal class AlarmReceiver : BroadcastReceiver() {
     private var repository: AlarmNotificationRepository? = null
-
     override fun onReceive(context: Context, intent: Intent) {
         val requestId =
             intent.getIntExtra(SmplrAlarmReceiverObjects.SMPLR_ALARM_RECEIVER_INTENT_ID, -1)
-
         onAlarmReceived(context, requestId)
     }
 
-    private fun onAlarmReceived(context: Context, requestId: Int){
+    private fun onAlarmReceived(context: Context, requestId: Int) {
         try {
             repository = AlarmNotificationRepository(context)
             val alarmService = AlarmService(context)
-
             Timber.v("onReceive --> $requestId")
-
             if (requestId == -1) return
-
             CoroutineScope(Dispatchers.IO).launch {
-
                 repository?.let {
                     try {
-
                         val alarmNotification = it.getAlarmNotification(requestId)
-
                         alarmNotification.notificationChannelItem?.let { channel ->
                             alarmNotification.notificationItem?.let { notification ->
                                 context.showNotification(
@@ -67,7 +60,6 @@ internal class AlarmReceiver : BroadcastReceiver() {
                         Timber.e("updateRepeatingAlarm: $ex ")
                     }
                 }
-
             }
 
         } catch (ex: Exception) {

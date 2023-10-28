@@ -338,7 +338,7 @@ internal class AlarmNotificationRepository(
         extrasKeySet?.map {
             try {
                 jsonObject.put(it, JSONObject.wrap(intent.extras?.get(it)))
-            } catch (ex: JSONException) {
+            } catch (_: JSONException) {
 
             }
         }

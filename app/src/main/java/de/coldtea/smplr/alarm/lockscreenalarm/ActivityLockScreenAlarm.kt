@@ -2,10 +2,12 @@ package de.coldtea.smplr.alarm.lockscreenalarm
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
 import de.coldtea.smplr.alarm.databinding.ActivityLockScreenAlarmBinding
 import de.coldtea.smplr.alarm.extensions.activateLockScreen
 import de.coldtea.smplr.alarm.extensions.deactivateLockScreen
 
+@AndroidEntryPoint
 class ActivityLockScreenAlarm : AppCompatActivity(){
 
     private lateinit var binding: ActivityLockScreenAlarmBinding

@@ -18,12 +18,12 @@ import timber.log.Timber
 internal class TimeChangeReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        Timber.i("onRecieve --> ${intent.action}")
+        Timber.i("onReceive --> ${intent.action}")
         when (intent.action) {
             Intent.ACTION_TIME_CHANGED,
             Intent.ACTION_DATE_CHANGED,
             Intent.ACTION_TIMEZONE_CHANGED -> onBootComplete(context)
-            else -> Timber.w("onRecieve --> Recieved illegal broadcast!")
+            else -> Timber.w("onReceive --> Received illegal broadcast!")
         }
     }
 

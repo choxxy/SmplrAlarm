@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import de.coldtea.smplr.alarm.R
 import de.coldtea.smplr.alarm.alarms.models.WeekInfo
 import de.coldtea.smplr.alarm.databinding.FragmentAlarmsBinding
@@ -31,6 +32,7 @@ import de.coldtea.smplr.smplralarm.smplrAlarmUpdate
 import java.util.Calendar
 
 
+@AndroidEntryPoint
 class AlarmFragment : Fragment() {
 
     private lateinit var binding: FragmentAlarmsBinding
@@ -240,8 +242,7 @@ class AlarmFragment : Fragment() {
 
         binding.cancelAlarm.setOnClickListener {
             viewModel.cancelAlarm(
-                binding.alarmId.text.toString().toInt(),
-                requireContext().applicationContext
+                binding.alarmId.text.toString().toInt()
             )
         }
 
