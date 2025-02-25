@@ -51,8 +51,8 @@ dependencies {
     implementation "androidx.room:room-ktx:2.6.1"
 
     //Moshi
+    ksp 'com.squareup.moshi:moshi-kotlin-codegen:1.15.2'
     implementation 'com.squareup.moshi:moshi:1.15.2'
-    ksp 'com.squareup.moshi:moshi-kotlin-codegen:1.15.0'
 
 }
 
