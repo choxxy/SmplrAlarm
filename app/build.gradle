@@ -63,7 +63,7 @@ dependencies {
 
     // hilt
     implementation 'com.google.dagger:hilt-android:2.55'
-    kapt 'com.google.dagger:hilt-compiler:2.55'
+    kapt 'com.google.dagger:hilt-compiler:2.57.1'
 
     //adapter-delegates
     implementation 'com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.2'
